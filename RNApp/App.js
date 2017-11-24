@@ -1,64 +1,66 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Platform,
   StyleSheet,
   Text,
-  View,
-  Image
-} from 'react-native';
+  View
+} from 'react-native'
 
-// import {
-//   StackNavigator
-// } from 'react-navigation'
+import MainScreen from './components/mainScreen'
+import homePage from './components/app'
+import aboutScreen from './components/about'
+import {
+  StackNavigator,
+  TabNavigator,
+  DrawerNavigator
+} from 'react-navigation'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+// const App = StackNavigator({
+//   Home: {
+//     screen: homePage,
+//     navigationOptions: {
+//       title: '首页'
+//     }
+//   },
+//   Main: {
+//     screen: MainScreen,
+//     navigationOptions: {
+//       title: '第二个页面'
+//     }
+//   }
+// })
 
-export default class App extends Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-      <Image source={{uri: 'http://t.cn/RY2v9gJ'}}
-       style={{width: 400, height: 400}} />
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
+// const App = TabNavigator({
+//   Home: {
+//     screen: homePage
+//   },
+//   Main: {
+//     screen: MainScreen
+//   }
+// }, {
+//   tabBarPosition: 'top',
+//   animationEnabled: true,
+//   tabBarOptions: {
+//     activeTintColor: '#e91e63'
+//   }
+// })
+
+const App = DrawerNavigator({
+  Home: {
+    screen: homePage,
+    navigationOptions: {
+      drawerLabel: '主菜单'
+    }
+  },
+  Main: {
+    screen: MainScreen
+  },
+  About: {
+    screen: aboutScreen,
+    navigationOptions: {
+      drawerLabel: '关于'
+    }
   }
-}
+})
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+export default App
