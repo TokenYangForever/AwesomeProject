@@ -26,7 +26,8 @@ export default class App extends Component {
     }
   }
   newGamePress = () => {
-    this.props.navigation.navigate('DrawerOpen')
+    this.props.navigation.navigate('Main')
+    // this.props.navigation.navigate('DrawerOpen')
   }
   continuePress = () => {}
   aboutPress = () => {
@@ -35,6 +36,7 @@ export default class App extends Component {
   render () {
     return (
       <View style={styles.container}>
+        <Text style={styles.titleText}>数独游戏</Text>
         <View style={styles.homeBtnGroup}>
           <TouchableNativeFeedback onPress={this.newGamePress}>
             <Text style={styles.homeBtn}>新游戏</Text>
@@ -77,5 +79,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems:'center'
+  },
+  titleText: {
+    fontSize: 20,
+    marginTop: 10,
+    textAlign:'center'
   }
 })
