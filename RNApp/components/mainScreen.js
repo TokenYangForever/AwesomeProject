@@ -10,7 +10,8 @@ import {
   StyleSheet,
   View,
   Platform,
-  Button
+  Button,
+  TouchableHighlight
 } from 'react-native'
 
 export default class App extends Component {
@@ -30,27 +31,31 @@ export default class App extends Component {
       if (item === '') {
         return (
           <View key={index} style={styles.bRow}>
-            <Text style={styles.text}>{item}</Text>
+            <TouchableHighlight onPress={(ev) => {this.prressAction(ev, index)}}>
+              <Text style={styles.text}>{item}</Text>
+            </TouchableHighlight>
           </View>
         )      
       } else {
         return (
           <View key={index} style={styles.bRow}>
-            <Text style={styles.text}>{item}</Text>
+            <TouchableHighlight onPress={(ev) => {this.prressAction(ev, index)}}>
+              <Text style={styles.text}>{item}</Text>
+            </TouchableHighlight>
           </View>
         )
       }
     })
   }
-  changInput = (val) => {
+  prressAction = (ev, index) => {
     this.setState({
-      viewtext: val
+      chooseIndex: index
     })
   }
   render () {
     return (
       <View style={styles.container}>
-        <Text>{this.state.arr.length}</Text>
+        <Text>{this.state.chooseIndex}</Text>
         <Text>mainScreen</Text>
         <View style={styles.MScontainer}>
         {this.renderArr()}
