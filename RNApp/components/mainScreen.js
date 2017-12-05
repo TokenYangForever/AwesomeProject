@@ -17,48 +17,78 @@ import {
 export default class App extends Component {
   constructor () {
     super()
+    fetch('http://192.168.0.104:8083/sudo/getSudo')
+    .then(response => {
+      response.json().then(
+          // 这里的result就是最终的接口数据了
+          (data) => {
+            let {quesArr, result} = data
+            this.setState({
+              arr: quesArr,
+              result,
+              chooseIndex: 0
+            })
+          }
+      )
+    })
     this.state = {
-      arr: [
-        '1', '2', '', '4', '5', '6', '7', '8', '9','4', '5', '6', '7', '8', '9', '1', '2', '3','7', '8', '9', '1', '2', '3', '4', '5', '6','2', '1', '4', '3', '6', '5', '8', '9', '7','3', '6', '5', '8', '9', '7', '2', '1', '4','8', '9', '7', '2', '1', '4', '3', '6', '5','5', '3', '1', '6', '4', '2', '9', '7', '8','6', '4', '2', '9', '7', '8', '5', '3', '1','9', '7', '8', '5', '3', '1', '6', '4', '2'
-      ],
-      viewtext: '123',
+      arr: [],
+      result: [],
       chooseIndex: 0
     }
   }
   renderArr = () => {
-    const arr2 = this.state.arr
-    return arr2.map((item, index) => {
-      if (item === '') {
+    let {arr, chooseIndex} = this.state
+    return arr.map((item, index) => {
+      if (typeof item == "string") {
         return (
-          <View key={index} style={styles.bRow}>
-            <TouchableHighlight onPress={(ev) => {this.prressAction(ev, index)}}>
-              <Text style={styles.text}>{item}</Text>
+          <View key={index} style={chooseIndex == index ? styles.bChoosen : styles.bRow}>
+            <TouchableHighlight onPress={(ev) => {this.pressAction(ev, index)}}>
+              <Text style={styles.text}>{item === '' ? ' ' : item}</Text>
             </TouchableHighlight>
           </View>
         )      
       } else {
         return (
           <View key={index} style={styles.bRow}>
-            <TouchableHighlight onPress={(ev) => {this.prressAction(ev, index)}}>
-              <Text style={styles.text}>{item}</Text>
-            </TouchableHighlight>
+            <Text style={styles.text}>{item}</Text>
           </View>
         )
       }
     })
   }
-  prressAction = (ev, index) => {
+  pressAction = (ev, index) => {
     this.setState({
       chooseIndex: index
     })
   }
+  selectAction = (ev, item) => {
+    let {arr, chooseIndex} = this.state
+    arr[chooseIndex] = item
+    this.setState({arr})
+  }
   render () {
     return (
-      <View style={styles.container}>
-        <Text>{this.state.chooseIndex}</Text>
-        <Text>mainScreen</Text>
-        <View style={styles.MScontainer}>
-        {this.renderArr()}
+      <View>
+        <View style={styles.container}>
+          <Text>{this.state.chooseIndex}</Text>
+          <Text>mainScreen</Text>
+          <View style={styles.MScontainer}>
+            {this.renderArr()}
+          </View>
+        </View>
+        <View style={styles.bottomContainer}>
+          {
+            ['1','2','3','4','5','6','7','8','9'].map((item, index) => {
+              return (
+                <View key={index} style={styles.bottomSpan}>
+                  <TouchableHighlight onPress={(ev) => {this.selectAction(ev, item)}}>
+                    <Text style={styles.text}>{item}</Text>
+                  </TouchableHighlight>
+                </View>
+              )
+            })
+          }
         </View>
       </View>
     )
@@ -77,12 +107,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 10
   },
+  bottomContainer: {
+    marginTop: 450,
+    flex: 1,
+    width: 360,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  bottomSpan: {
+    margin: 5,
+    width: 35,
+    height: 35,
+    borderColor: 'skyblue',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 5
+  },
   bRow: {
     width: 40,
     height: 40,
     borderColor: 'skyblue',
     borderStyle: 'solid',
     borderWidth: 1
+  },
+  bChoosen: {
+    width: 40,
+    height: 40,
+    borderColor: 'crimson',
+    borderStyle: 'solid',
+    borderWidth: 2
   },
   text: {
     textAlign: 'center',
