@@ -11,12 +11,20 @@ import {
   View,
   Platform,
   Button,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from 'react-native'
 
 export default class App extends Component {
   constructor () {
     super()
+    this.state = {
+      arr: [],
+      result: [],
+      chooseIndex: -1
+    }
+  }
+  componentDidMount () {
     fetch('http://192.168.0.104:8083/sudo/getSudo')
     .then(response => {
       response.json().then(
@@ -26,16 +34,11 @@ export default class App extends Component {
             this.setState({
               arr: quesArr,
               result,
-              chooseIndex: 0
+              chooseIndex: -1
             })
           }
       )
     })
-    this.state = {
-      arr: [],
-      result: [],
-      chooseIndex: 0
-    }
   }
   renderArr = () => {
     let {arr, chooseIndex} = this.state
@@ -44,7 +47,7 @@ export default class App extends Component {
         return (
           <View key={index} style={chooseIndex == index ? styles.bChoosen : styles.bRow}>
             <TouchableHighlight onPress={(ev) => {this.pressAction(ev, index)}}>
-              <Text style={styles.text}>{item === '' ? ' ' : item}</Text>
+              <Text style={styles.editableText}>{item === '' ? ' ' : item}</Text>
             </TouchableHighlight>
           </View>
         )      
@@ -66,6 +69,31 @@ export default class App extends Component {
     let {arr, chooseIndex} = this.state
     arr[chooseIndex] = item
     this.setState({arr})
+  }
+  cleanAction = () => {
+    let {arr, chooseIndex} = this.state
+    if (chooseIndex === -1) {
+      return
+    }
+    arr[chooseIndex] = ''
+    this.setState({arr})
+  }
+  submitAction = () => {
+    let flag = true
+    let {arr, result} = this.state
+    for (let i in arr) {
+      if (arr[i] == '') {
+        Alert.alert(
+          '还有空格没填完哦~'
+        )
+        return
+      } else if (flag && Number(arr[i]) !== result[i]) {
+        flag = false
+      }
+    }
+    Alert.alert(
+      flag ? '完成~' : '有空格填错了哦~'
+    )
   }
   render () {
     return (
@@ -89,6 +117,29 @@ export default class App extends Component {
               )
             })
           }
+          <View style={styles.bottomContainer2}>
+            <View style={styles.buttonStyle}>
+              <Button
+                onPress={this.cleanAction}
+                title="清空"
+                color="#841584"
+              />            
+            </View>
+            <View style={styles.buttonStyle}>
+              <Button
+                onPress={this.cleanAction}
+                title="暂停"
+                color="#841584"
+              />            
+            </View>
+            <View style={styles.buttonStyle}>
+              <Button
+                onPress={this.submitAction}
+                title="提交"
+                color="#841584"
+              />            
+            </View>
+          </View>
         </View>
       </View>
     )
@@ -108,11 +159,22 @@ const styles = StyleSheet.create({
     margin: 10
   },
   bottomContainer: {
-    marginTop: 450,
     flex: 1,
+    marginTop: 450,
     width: 360,
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  bottomContainer2: {
+    position: 'absolute',
+    top: 20,
+    flex: 1,
+    flexDirection: 'row',
+  },
+  buttonStyle: {
+    margin: 10,
+    width: 70,
+    height: 50
   },
   bottomSpan: {
     margin: 5,
@@ -140,5 +202,10 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontSize: 25
+  },
+  editableText: {
+    textAlign: 'center',
+    fontSize: 25,
+    color: 'green'
   }
 })
