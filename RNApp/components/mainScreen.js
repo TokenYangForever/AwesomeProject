@@ -20,21 +20,20 @@ export default class App extends Component {
     super()
     this.state = {
       arr: [],
-      result: [],
-      chooseIndex: -1
+      chooseIndex: -1,
+      wrongIndex: -1
     }
   }
   componentDidMount () {
-    fetch('http://192.168.0.104:8083/sudo/getSudo')
+    const { params } = this.props.navigation.state
+    fetch(`http://192.168.0.105:8083/sudo/getSudo?difficulty=${params.difficulty}`)
     .then(response => {
       response.json().then(
           // 这里的result就是最终的接口数据了
           (data) => {
-            let {quesArr, result} = data
+            let {result} = data
             this.setState({
-              arr: quesArr,
-              result,
-              chooseIndex: -1
+              arr: result,
             })
           }
       )
@@ -65,6 +64,41 @@ export default class App extends Component {
       chooseIndex: index
     })
   }
+  judgeResult = () => {
+    let arr = this.state.arr
+    let dp = {}
+    let index = 0
+    for (let a = 0; a < 3; a++) {
+      for (let b = 0; b < 3; b++) {
+        dp[`area${a}${b}`] = new Map()
+      }
+    }
+    for (let i = 0; i < 9; i++) {
+      dp[`x${i}`] = new Map()
+      dp[`y${i}`] = new Map()
+    }
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        let temp = arr[index]
+        if (temp !== '') {
+          let xIndex = 'x' + j
+          let yIndex = 'y' + i
+          let areaIndex = 'area' + Math.floor(j/3) + Math.floor(i/3)
+          if (dp[xIndex].has(temp) || dp[yIndex].has(temp) || dp[areaIndex].has(temp)) {
+            return [false, '有空格填错了哦~', index]
+          } else {
+            dp[xIndex].set(temp, true)
+            dp[yIndex].set(temp, true)
+            dp[areaIndex].set(temp, true)
+          }
+        } else {
+          return [false, '还有空格没填完哦~']
+        }
+        index++
+      }
+    }
+    return [true]
+  }
   selectAction = (ev, item) => {
     let {arr, chooseIndex} = this.state
     arr[chooseIndex] = item
@@ -79,30 +113,36 @@ export default class App extends Component {
     this.setState({arr})
   }
   submitAction = () => {
-    let flag = true
-    let {arr, result} = this.state
-    for (let i in arr) {
-      if (arr[i] == '') {
-        Alert.alert(
-          '还有空格没填完哦~'
-        )
-        return
-      } else if (flag && Number(arr[i]) !== result[i]) {
-        flag = false
+    let {arr} = this.state
+    let result = this.judgeResult()
+
+    if (result[0]) {
+      Alert.alert(
+        '完成~'
+      )
+    } else {
+      Alert.alert(
+        result[1]
+      )
+      if (result[2]) {
+        this.setState({
+          chooseIndex: result[2]
+        })
       }
     }
-    Alert.alert(
-      flag ? '完成~' : '有空格填错了哦~'
-    )
   }
   render () {
     return (
       <View>
         <View style={styles.container}>
-          <Text>{this.state.chooseIndex}</Text>
+          <Text>{this.state.wrongIndex}</Text>
           <Text>mainScreen</Text>
           <View style={styles.MScontainer}>
             {this.renderArr()}
+            <View style={styles.borderView1}></View>
+            <View style={styles.borderView2}></View>
+            <View style={styles.borderView3}></View>
+            <View style={styles.borderView4}></View>
           </View>
         </View>
         <View style={styles.bottomContainer}>
@@ -157,6 +197,46 @@ const styles = StyleSheet.create({
     width: 360,
     flexDirection: 'row',
     margin: 10
+  },
+  borderView1: {
+    position: 'absolute',
+    top: 120,
+    left: 0,
+    width: 360,
+    height: 0,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1.5,
+  },
+  borderView2: {
+    position: 'absolute',
+    top: 240,
+    left: 0,
+    width: 360,
+    height: 0,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1.5,
+  },
+  borderView3: {
+    position: 'absolute',
+    top: 0,
+    left: 120,
+    width: 0,
+    height: 360,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1.5,
+  },
+  borderView4: {
+    position: 'absolute',
+    top: 0,
+    left: 240,
+    width: 0,
+    height: 360,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1.5,
   },
   bottomContainer: {
     flex: 1,

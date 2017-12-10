@@ -21,12 +21,13 @@ export default class App extends Component {
   constructor () {
     super()
     this.state = {
-      text: '',
+      text: 'Easy',
       select: ''
     }
   }
   newGamePress = () => {
-    this.props.navigation.navigate('Main')
+    let {text} = this.state
+    this.props.navigation.navigate('Main', {difficulty: text})
     // this.props.navigation.navigate('DrawerOpen')
   }
   continuePress = () => {}
@@ -51,9 +52,9 @@ export default class App extends Component {
             <Picker
               selectedValue={this.state.text}
               onValueChange={(lang) => this.setState({text: lang})}>
-              <Picker.Item label="入门" value="入门" />
-              <Picker.Item label="中等" value="中等" />
-              <Picker.Item label="困难" value="困难" />
+              <Picker.Item label="简单" value="Easy" />
+              <Picker.Item label="中等" value="Medium" />
+              <Picker.Item label="困难" value="Hard" />
             </Picker>
           </View>
         </View>
