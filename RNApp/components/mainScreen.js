@@ -10,7 +10,6 @@ import {
   Text,
   StyleSheet,
   View,
-  Platform,
   Button,
   TouchableHighlight,
   Alert

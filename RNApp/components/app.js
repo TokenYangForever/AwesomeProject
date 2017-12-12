@@ -7,14 +7,10 @@
 import React, { Component } from 'react'
 import deviceStorage from './../common/DeviceStorage'
 import {
-  Platform,
   StyleSheet,
   Text,
   View,
-  Image,
-  Button,
   TouchableNativeFeedback,
-  TouchableHighlight,
   Picker,
   Alert
 } from 'react-native'
