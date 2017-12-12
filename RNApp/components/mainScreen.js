@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react'
+import deviceStorage from './../common/DeviceStorage'
 import {
   Text,
   StyleSheet,
@@ -20,24 +21,31 @@ export default class App extends Component {
     super()
     this.state = {
       arr: [],
-      chooseIndex: -1,
-      wrongIndex: -1
+      chooseIndex: -1
     }
   }
   componentDidMount () {
     const { params } = this.props.navigation.state
-    fetch(`http://192.168.0.105:8083/sudo/getSudo?difficulty=${params.difficulty}`)
-    .then(response => {
-      response.json().then(
-          // 这里的result就是最终的接口数据了
-          (data) => {
-            let {result} = data
-            this.setState({
-              arr: result,
-            })
-          }
-      )
-    })
+    if (params.newgame) {
+      // 新游戏
+      fetch(`http://192.168.0.105:8083/sudo/getSudo?difficulty=${params.difficulty}`)
+      .then(response => {
+        response.json().then(
+            // 这里的result就是最终的接口数据了
+            (data) => {
+              let {result} = data
+              this.setState({
+                arr: result,
+              })
+            }
+        )
+      })
+    } else {
+      // 继续游戏
+      deviceStorage.get('Checkerboard').then((arr) => {
+        this.setState({arr})
+      })
+    }
   }
   renderArr = () => {
     let {arr, chooseIndex} = this.state
@@ -102,6 +110,7 @@ export default class App extends Component {
   selectAction = (ev, item) => {
     let {arr, chooseIndex} = this.state
     arr[chooseIndex] = item
+    deviceStorage.save('Checkerboard', arr).then(() => {})
     this.setState({arr})
   }
   cleanAction = () => {
@@ -135,7 +144,6 @@ export default class App extends Component {
     return (
       <View>
         <View style={styles.container}>
-          <Text>{this.state.wrongIndex}</Text>
           <Text>mainScreen</Text>
           <View style={styles.MScontainer}>
             {this.renderArr()}

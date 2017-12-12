@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react'
+import deviceStorage from './../common/DeviceStorage'
 import {
   Platform,
   StyleSheet,
@@ -14,7 +15,8 @@ import {
   Button,
   TouchableNativeFeedback,
   TouchableHighlight,
-  Picker
+  Picker,
+  Alert
 } from 'react-native'
 
 export default class App extends Component {
@@ -24,13 +26,36 @@ export default class App extends Component {
       text: 'Easy',
       select: ''
     }
+    deviceStorage.get('difficulty').then(val => {
+      // 没有值时，val为null
+      if (val) {
+        this.setState({
+          text: val,
+          select: ''
+        })
+      }
+    })
+
   }
   newGamePress = () => {
     let {text} = this.state
-    this.props.navigation.navigate('Main', {difficulty: text})
-    // this.props.navigation.navigate('DrawerOpen')
+    deviceStorage.delete('Main')
+    deviceStorage.save('difficulty', text).then(() => {
+      this.props.navigation.navigate('Main', {difficulty: text, newgame: true})
+    })
   }
-  continuePress = () => {}
+  continuePress = () => {
+    deviceStorage.get('Checkerboard').then((arr) => {
+      if (arr) {
+        this.props.navigation.navigate('Main', {newgame: false})
+      } else {
+        return Promise.reject()
+      }
+    }).catch(() => {
+      Alert.alert('无法找到之前的记录，重新开始吧~')
+    })
+    
+  }
   aboutPress = () => {
     this.props.navigation.navigate('About')
   }
