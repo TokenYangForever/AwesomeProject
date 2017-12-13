@@ -27,7 +27,7 @@ export default class App extends Component {
     const { params } = this.props.navigation.state
     if (params.newgame) {
       // 新游戏
-      fetch(`http://192.168.0.105:8083/sudo/getSudo?difficulty=${params.difficulty}`)
+      fetch(`http://101.200.35.148:8081/sudo/getSudo?difficulty=${params.difficulty}`)
       .then(response => {
         response.json().then(
             // 这里的result就是最终的接口数据了
