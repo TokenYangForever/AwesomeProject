@@ -123,11 +123,12 @@ export default class App extends Component {
   submitAction = () => {
     let {arr} = this.state
     let result = this.judgeResult()
-
     if (result[0]) {
       Alert.alert(
         '完成~'
       )
+      deviceStorage.delete('Checkerboard')
+      this.props.navigation.navigate('Home')
     } else {
       Alert.alert(
         result[1]
@@ -169,13 +170,6 @@ export default class App extends Component {
               <Button
                 onPress={this.cleanAction}
                 title="清空"
-                color="#841584"
-              />            
-            </View>
-            <View style={styles.buttonStyle}>
-              <Button
-                onPress={this.cleanAction}
-                title="暂停"
                 color="#841584"
               />            
             </View>

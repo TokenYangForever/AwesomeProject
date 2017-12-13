@@ -35,7 +35,6 @@ export default class App extends Component {
   }
   newGamePress = () => {
     let {text} = this.state
-    deviceStorage.delete('Main')
     deviceStorage.save('difficulty', text).then(() => {
       this.props.navigation.navigate('Main', {difficulty: text, newgame: true})
     })
